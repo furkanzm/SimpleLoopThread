@@ -12,7 +12,8 @@ void PipeLine::addSystem(std::shared_ptr<SystemInterface> System)
 void PipeLine::Start()
 {
 	for (int i = 0; i < Systems.size(); ++i) {
-		Systems[i]->addOutput(Systems[i + 1]);
+        if(i != Systems.size()-1)
+            Systems[i]->addOutput(Systems[i + 1]);
 		Systems[i]->Start();
 	}
 }
