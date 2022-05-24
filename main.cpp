@@ -1,54 +1,60 @@
-#include "buf.h"
+#include "System1.h"
+#include "System2.h"
 #include "simpleloopthread.h"
 #include "systeminterface.h"
-#include "systemlower.h"
-#include "systemupper.h"
 #include <iostream>
+#include <pipeline.h>
+
+#define shortSleep std::this_thread::sleep_for(std::chrono::milliseconds(1500))
+#define longSleep  std::this_thread::sleep_for(std::chrono::milliseconds(3000))
+
 class dum : public SystemInterface
 {
 public:
-	dum() {}
-	std::string process(std::shared_ptr<Buf> buf)
+	std::shared_ptr<Buf> process(std::shared_ptr<Buf> buf) override
 	{
-		std::cout << "size: " << buf->size() << std::endl;
-		return " ";
+		auto downcastedPtr = std::dynamic_pointer_cast<StringBuf>(buf);
+		std::cout << downcastedPtr->toString() << std::endl;
+
+		return std::make_shared<StringBuf>("*");
 	}
 };
 
 int main()
 {
-	SystemUpper upper;
-	SystemLower lower;
-	dum dm;
-	//	upper.addOutput(&lower);
-	//	lower.addOutput(&dm);
-	lower.addOutput(&upper);
-	upper.addOutput(&dm);
-	dm.Start();
-	// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	upper.Start();
-	lower.Start();
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	PipeLine pipe;
+	std::shared_ptr<SystemInterface> system1 = std::make_shared<System1>();
+	std::shared_ptr<SystemInterface> system2 = std::make_shared<System2>();
+	std::shared_ptr<SystemInterface> dm = std::make_shared<dum>();
+	pipe.addSystem(system1);
+	pipe.addSystem(system2);
+	pipe.addSystem(dm);
+	pipe.Start();
+
+	shortSleep;
 	std::cout << "\n";
+	std::shared_ptr<Buf> strbuf1 =
+		std::make_shared<StringBuf>("fffffffffffff");
+	system1->add(strbuf1);
+	shortSleep;
 
-	std::shared_ptr<Buf> bf = std::make_shared<StringBuf>("FuRkAnUzUmADaSd");
-	lower.add(bf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+	std::shared_ptr<Buf> strbuf2 = std::make_shared<StringBuf>("cppprimer");
+	system1->add(strbuf2);
+	shortSleep;
 
-	std::shared_ptr<Buf> bg =
-		std::make_shared<StringBuf>("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-	lower.add(bg);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+	std::shared_ptr<Buf> strbuf3 =
+		std::make_shared<StringBuf>("FuRkAnUzUm");
+	system1->add(strbuf3);
+	shortSleep;
 
-	std::shared_ptr<Buf> bl = std::make_shared<StringBuf>("YiRmIUcMaYıS2022");
-	lower.add(bl);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1200));
-
-	std::shared_ptr<Buf> bc =
-		std::make_shared<StringBuf>("FFffffffffffFFFFFFffff");
-	lower.add(bc);
-	//	std::shared_ptr<Buf> bf(new StringBuf("ffffffffff"));
-	//    upper.add(bf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::shared_ptr<Buf> strbuf4 =
+		std::make_shared<StringBuf>("yirmidortMayıs");
+	system1->add(strbuf4);
+    shortSleep;
+    
+    std::shared_ptr<Buf> strbuf5 =
+        std::make_shared<StringBuf>("aaaaaAAAAAaaaaa");
+    system1->add(strbuf5);
+	longSleep;
 	return 0;
 }
