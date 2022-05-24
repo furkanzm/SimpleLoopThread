@@ -1,18 +1,21 @@
-#include "systemlower.h"
+#include "System1.h"
 
-SystemLower::SystemLower()
+System1::System1()
 {
 }
 
-SystemLower::~SystemLower()
+System1::~System1()
 {
 }
 
-std::string SystemLower::process(std::shared_ptr<Buf> buf)
+std::shared_ptr<Buf> System1::process(std::shared_ptr<Buf> buf)
 {
-    
-    std::string val(buf->data(), buf->data() + buf->size());
-	std::transform(val.begin()+8, val.end(),
-				   val.begin()+8, ::tolower);
-	return val;
+	std::shared_ptr<Buf> localPtr;
+	auto downcastedPtr = std::dynamic_pointer_cast<StringBuf>(buf);
+	std::string stringBuf = downcastedPtr->toString();
+	std::transform(stringBuf.begin() + 7, stringBuf.end(),
+				   stringBuf.begin() + 7, ::tolower);
+	localPtr = std::make_shared<StringBuf>(stringBuf);
+
+	return localPtr;
 }
