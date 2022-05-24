@@ -2,10 +2,11 @@
 #define SYSTEMINTERFACE_H
 
 #include "buf.h"
+#include "intbuf.h"
 #include "simpleloopthread.h"
 #include "stringbuf.h"
 #include <iostream>
-#include <atomic>
+#include <math.h>
 #include <queue>
 
 class SystemInterface : public SimpleLoopThread
@@ -14,15 +15,13 @@ public:
 	SystemInterface();
 	~SystemInterface();
 	void add(std::shared_ptr<Buf> buf);
-	void addOutput(SystemInterface *System);
-	virtual std::string process(std::shared_ptr<Buf>) = 0;
+	void addOutput(std::shared_ptr<SystemInterface>);
+	virtual std::shared_ptr<Buf> process(std::shared_ptr<Buf>) = 0;
 
 private:
-	int Loop(NOTIFY_TYPE nt) override;
-	std::vector<SystemInterface *> outq;
+	std::vector<std::shared_ptr<SystemInterface>> outq;
 	std::queue<std::shared_ptr<Buf>> buffer;
+	int Loop(NOTIFY_TYPE nt) override;
 	std::mutex mutex_;
-	bool flag;
 };
-
 #endif // SYSTEMINTERFACE_H
