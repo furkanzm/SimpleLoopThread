@@ -5,11 +5,11 @@
 class StringBuf : public Buf
 {
 public:
-    StringBuf();
+	StringBuf(const std::string &strstr);
 	uint8_t *data() override;
 	size_t size() override;
-	StringBuf(const std::string &strstr);
-    std::string rndm ();
+	std::string toString();
+
 private:
 	std::string stringBuffer;
 };
