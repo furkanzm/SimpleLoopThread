@@ -2,17 +2,12 @@
 
 StringBuf::StringBuf(const std::string &strstr)
 {
-    stringBuffer = strstr;
+	stringBuffer = strstr;
 }
 
-std::string StringBuf::rndm()
+std::string StringBuf::toString()
 {
-    return "";
-}
-
-StringBuf::StringBuf()
-{
-    
+	return stringBuffer;
 }
 
 uint8_t *StringBuf::data()
